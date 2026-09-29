@@ -1,7 +1,7 @@
-FROM node:22-slim
+FROM python:3.12-slim
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --omit=dev
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-EXPOSE 4000
-CMD ["npm","start"]
+EXPOSE 8001
+CMD ["python","sensor_api.py"]
