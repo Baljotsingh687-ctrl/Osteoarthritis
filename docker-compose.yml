@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: oa_screening
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports: ["5432:5432"]
+    volumes: [oa_pgdata:/var/lib/postgresql/data]
+  sensor-api:
+    build: ./sensor
+    environment:
+      KOA_MODEL_DIR: /app/model
+      PORT: 8001
+    ports: ["8001:8001"]
+  backend:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/oa_screening
+      DATABASE_SSL: "false"
+      JWT_SECRET: change-me
+      DEVICE_API_KEY: change-me-device-key
+      PORT: 4000
+      SENSOR_API_URL: http://sensor-api:8001/analyze-sensor
+      SENSOR_API_TIMEOUT_MS: 60000
+    depends_on: [postgres, sensor-api]
+    ports: ["4000:4000"]
+volumes:
+  oa_pgdata:

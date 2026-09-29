@@ -1,0 +1,16 @@
+OA SATHI LOGIN QUICK NOTES
+
+Patient signup is public at POST /api/auth/register. It creates the users row and patient profile in one transaction and returns a JWT. Email verification is intentionally not required for this demo. Passwords are stored as bcrypt hashes.
+
+IMPORTANT: A phone number is optional in the patient signup form. The backend now accepts an empty phone field and stores it as NULL.
+
+Frontend .env should contain exactly:
+VITE_API_BASE_URL=http://localhost:4000/api
+
+Start Docker Desktop and the backend/PostgreSQL first, then in the frontend folder run:
+npm install
+npm run dev
+
+Open the Vite URL, choose Patient > New patient? Create an account, enter name/email/password (8+ chars); phone is optional. After registration the API returns a JWT and profile.
+
+Health-worker self-signup remains disabled by design; health-worker accounts must be created by an authorized admin.
