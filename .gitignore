@@ -1,23 +1,4 @@
-# Secrets and local config
+node_modules
+dist
 .env
-.env.*
-!.env.example
-**/.env
-**/.env.*
-!**/.env.example
-
-# Dependencies/builds
-node_modules/
-**/node_modules/
-dist/
-**/dist/
-.venv/
-venv/
-__pycache__/
-*.py[cod]
 .DS_Store
-
-# Local DB / logs
-*.log
-*.sqlite
-*.db

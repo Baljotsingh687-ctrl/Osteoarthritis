@@ -1,0 +1,17 @@
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import RiskPill from '../components/RiskPill.jsx'
+import { ensurePatientProfile } from '../lib/patientSession.js'
+import { getLatestRisk, getPatient } from '../lib/patientApi.js'
+
+export default function PatientDashboard() {
+  const [patient, setPatient] = useState(null); const [risk, setRisk] = useState(null); const [error, setError] = useState('')
+  useEffect(() => { (async()=>{ try { const p=await ensurePatientProfile(); const full=await getPatient(p.id); setPatient(full); try{setRisk(await getLatestRisk(p.id))}catch{} } catch(e){setError(e.message)} })() }, [])
+  const assessments=patient?.symptom_assessments||[]; const sessions=patient?.sensor_sessions||[]
+  return <div><div className="flex flex-wrap justify-between items-center gap-4 mb-6"><div><h1 className="text-2xl m-0">Welcome back, {patient?.name || 'Patient'}</h1><div className="text-sm text-ink-soft mt-0.5">Live data from your OA screening record</div></div><div className="text-sm text-ink-soft bg-bg border border-line rounded-md px-4 py-2.5">Screenings are performed by a healthcare worker</div></div>{error&&<p className="text-sm text-accent mb-4">{error}</p>}<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-7"><KpiCard label="Latest risk" value={risk?.risk_tier ? risk.risk_tier : 'Pending'} valueClass={risk?.risk_tier==='high'?'text-risk-high':risk?.risk_tier==='moderate'?'text-risk-mid':'text-primary-dark'}/><KpiCard label="Questionnaires" value={assessments.length}/><KpiCard label="Sensor sessions" value={sessions.length}/><KpiCard label="Composite score" value={risk?.composite_score ?? '—'}/></div><div className="grid sm:grid-cols-3 gap-3 mb-6">
+      <Link to="/dashboard/patient/screen" className="no-underline bg-white border border-line rounded-lg p-4 hover:border-primary"><strong className="block text-primary-dark mb-1">Symptom questionnaire</strong><span className="text-sm text-ink-soft">Complete your knee symptom check.</span></Link>
+      <Link to="/dashboard/patient/gait" className="no-underline bg-white border border-line rounded-lg p-4 hover:border-primary"><strong className="block text-primary-dark mb-1">Gait analysis</strong><span className="text-sm text-ink-soft">Record or upload a walking video (optional).</span></Link>
+      <Link to="/dashboard/patient/xray" className="no-underline bg-white border border-line rounded-lg p-4 hover:border-primary"><strong className="block text-primary-dark mb-1">Upload X-ray</strong><span className="text-sm text-ink-soft">Optional knee X-ray upload.</span></Link>
+    </div><div className="bg-white border border-line rounded-lg p-5"><h2 className="text-base mb-3.5">Latest screening</h2>{risk?<><div className="flex justify-between items-center mb-2"><span className="text-sm">Screening result</span><RiskPill level={risk.risk_tier}/></div><p className="text-sm mb-0">{risk.recommendation}</p></>:<p className="text-sm text-ink-soft">Complete the symptom questionnaire to generate your preliminary backend risk assessment. Gait, sensor and X-ray analysis are performed by healthcare workers.</p>}</div></div>
+}
+function KpiCard({label,value,valueClass='text-primary-dark'}){return <div className="bg-white border border-line rounded-lg px-4 py-4"><div className="text-sm text-ink-soft mb-1.5">{label}</div><div className={`font-serif text-2xl font-semibold capitalize ${valueClass}`}>{value}</div></div>}

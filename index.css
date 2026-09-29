@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-bg text-ink font-sans;
+  line-height: 1.55;
+}
+
+h1, h2, h3 {
+  @apply font-serif font-semibold text-primary-dark;
+}
+
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 2.5px solid theme('colors.accent');
+  outline-offset: 2px;
+}
+
+/* Woven stripe motif, referencing the Assamese gamosa border pattern.
+   Used sparingly as a section divider, not a background texture. */
+.stripe-divider {
+  height: 10px;
+  background: repeating-linear-gradient(
+    90deg,
+    theme('colors.accent') 0px, theme('colors.accent') 14px,
+    #ffffff 14px, #ffffff 20px,
+    theme('colors.primary') 20px, theme('colors.primary') 26px,
+    #ffffff 26px, #ffffff 32px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
